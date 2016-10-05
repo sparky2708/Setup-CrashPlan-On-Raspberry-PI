@@ -57,7 +57,7 @@ install_jtux() {
 fix_ui_client() {
   #Fix SWT jar that the CrashPlan client needs
   sudo mv ${CRASHPLAN_DEST_DIR}/lib/swt.jar{,.bak}
-  sudo cp /usr/lib/java/swt-gtk-3.8.2.jar ${CRASHPLAN_DEST_DIR}/lib/swt.jar
+  sudo ln -s /usr/lib/java/swt-gtk-3.8.2.jar ${CRASHPLAN_DEST_DIR}/lib/swt.jar
 }
 
 disable_upgrade() {
