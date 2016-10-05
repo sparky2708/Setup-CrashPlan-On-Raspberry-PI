@@ -1,9 +1,10 @@
 #!/bin/bash
 
-#############
-# n8henrie's Raspberry Pi CrashPlan installer script
+#######################################################################
+# ORIGINALLY DEVELOPED BY: n8henrie (https://github.com/n8henrie)
+# MAINTAINED BY: sparky2708 (https://github.com/sparky2708)
 # v0.1.0 :: 20160530
-#############
+#######################################################################
 
 set -e
 
