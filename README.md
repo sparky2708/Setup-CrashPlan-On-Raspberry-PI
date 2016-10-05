@@ -1,4 +1,4 @@
-# Setup-CrashPlan-On-Raspberry-PI
+# SETUP CRASHPLAN ON RASPBERRY PI
 Setup for CrashPlan on Raspberry PI
 
 To Run:
