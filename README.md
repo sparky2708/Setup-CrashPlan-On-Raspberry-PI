@@ -3,4 +3,4 @@ Setup for CrashPlan on Raspberry PI (parts originally developed by https://githu
 
 To Run:
 - Download the entire archive and unzip to a directory
-- Run using: `sudo crashplan-setup.sh`
+- In the directory where you extracted run: `sudo crashplan-setup.sh`
