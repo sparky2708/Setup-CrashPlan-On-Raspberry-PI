@@ -8,6 +8,8 @@
 set -e
 
 CP_VERSION="4.7.0"
+DOWNLOAD_DIR="downloads"
+CRASHPLAN_DEST_DIR="/usr/local/crashplan"
 
 install_dependencies() {
   read -p "Install dependencies? (y/n): "
@@ -18,15 +20,20 @@ install_dependencies() {
 }
 
 install_crashplan() {
+  pushd ${DOWNLOAD_DIR}
   wget http://download.code42.com/installs/linux/install/CrashPlan/CrashPlan_${CP_VERSION}_Linux.tgz
   tar xzf CrashPlan_${CP_VERSION}_Linux.tgz
 
   pushd crashplan-install
   sudo ./install.sh
-  popd
+  
+  popd  #DOWNLOAD_DIR
+  popd  #crashplan-install
 }
 
 install_jtux() {
+  pushd ${DOWNLOAD_DIR}
+
   # Built jtux from source
   git clone https://github.com/swenson/jtux.git
   pushd jtux
@@ -39,37 +46,39 @@ install_jtux() {
   # Uncomment to verify the sha256 if desired
   # echo 'e2a8b0acae75c22aead0e89bbd2178126e295b0f01108ff7d95d162ba53884b7 libjtux.so' | sha256sum -c
 
-  sudo mv /usr/local/crashplan/libjtux.so{,.bak}
-  sudo cp {,/usr/local/crashplan/}libjtux.so
-  popd
+  sudo mv ${CRASHPLAN_DEST_DIR}/libjtux.so{,.bak}
+  sudo cp {,${CRASHPLAN_DEST_DIR}/}libjtux.so
+  
+  popd  #jtux
+  popd  #DOWNLOAD_DIR
 }
 
 fix_ui_client() {
   #Fix SWT jar that the CrashPlan client needs
-  sudo mv /usr/local/crashplan/lib/swt.jar{,.bak}
-  sudo cp /usr/lib/java/swt-gtk-3.8.2.jar /usr/local/crashplan/lib/swt.jar
+  sudo mv ${CRASHPLAN_DEST_DIR}/lib/swt.jar{,.bak}
+  sudo cp /usr/lib/java/swt-gtk-3.8.2.jar ${CRASHPLAN_DEST_DIR}/lib/swt.jar
 }
 
 disable_upgrade() {
   #symlink the upgrade folder to dev null
-  sudo mv /usr/local/crashplan/upgrade{,.bak}
-  sudo ln -s /dev/null upgrade 
+  sudo mv ${CRASHPLAN_DEST_DIR}/upgrade{,.bak}
+  sudo ln -s /dev/null ${CRASHPLAN_DEST_DIR}/upgrade 
 }
 
 fix_java_path() {
   # Fix path to java -- symlinks to /etc/alternatives which links to jdk
-  sudo sed -i.bak 's|JAVACOMMON=.*$|JAVACOMMON=/usr/bin/java|' /usr/local/crashplan/install.vars
+  sudo sed -i.bak 's|JAVACOMMON=.*$|JAVACOMMON=/usr/bin/java|' ${CRASHPLAN_DEST_DIR}/install.vars
 }
 
 stop_crashplan() {
   sudo systemctl stop crashplan.service || true
-  sudo /usr/local/crashplan/bin/CrashPlanEngine stop || true
+  sudo ${CRASHPLAN_DEST_DIR}/bin/CrashPlanEngine stop || true
 }
 
 restart_crashplan() {
   # My example service file: https://gist.github.com/n8henrie/996bd2b9b309fe6011a3
   sudo systemctl restart crashplan || true
-  sudo /usr/local/crashplan/bin/CrashPlanEngine status
+  sudo ${CRASHPLAN_DEST_DIR}/bin/CrashPlanEngine status
 }
 
 remove_sysvinit() {
@@ -87,7 +96,7 @@ install_systemd() {
   while read -p "Install n8henrie's systemd service file? " install_systemd; do
     case "$install_systemd" in
       y|Y)
-          sudo wget https://gist.githubusercontent.com/n8henrie/996bd2b9b309fe6011a3/raw -O /etc/systemd/system/crashplan.service
+          sudo cp crashplan.service /etc/systemd/system/crashplan.service
           sudo systemctl enable crashplan.service
           break
           ;;
@@ -103,7 +112,7 @@ install_systemd() {
 }
 
 cleanup() {
-  cleanme="CrashPlan_${CP_VERSION}_Linux.tgz crashplan-install/ jtux/"
+  cleanme="${DOWNLOAD_DIR}"
   for each in $cleanme; do
     read -p "Remove $each? (y/n): " -r
     case $REPLY in
@@ -122,8 +131,7 @@ cleanup() {
 stop_crashplan
 install_dependencies
 
-crashplan_dest="/usr/local/crashplan"
-if [ -d "$crashplan_dest" ]; then
+if [ -d "${CRASHPLAN_DEST_DIR}" ]; then
   echo "It looks like $crashplan_dest already exists."
   echo "Would you like to:"
   echo "1: Try to update the existing installation"
