@@ -125,9 +125,9 @@ cleanup() {
   done
 }
 
-#######
+###############################
 # Begin main script
-######
+###############################
 
 stop_crashplan
 install_dependencies
@@ -156,11 +156,14 @@ else
   install_crashplan
 fi
 
+#### MODIFY THE INSTALLATION FOR RASPBERRY PI
 install_jtux
 fix_java_path
 install_systemd
 remove_sysvinit
 fix_ui_client
 disable_upgrade
+
+#### CLEANUP AND START
 cleanup
 restart_crashplan
