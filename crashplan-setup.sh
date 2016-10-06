@@ -32,9 +32,12 @@ install_crashplan() {
   tar xzf CrashPlan_${CP_VERSION}_Linux.tgz
 
   pushd crashplan-install
+  #remove crashplan if it is already installed since we are installing crashplan and we can't install if crashplan is already installed
   if [ -d "${CRASHPLAN_DEST_DIR}" ]; then
       sudo ./uninstall.sh -i ${CRASHPLAN_DEST_DIR}
   fi
+  
+  #install crashplan
   sudo ./install.sh
   
   popd  #DOWNLOAD_DIR
