@@ -12,6 +12,12 @@ CP_VERSION="4.7.0"
 DOWNLOAD_DIR="downloads"
 CRASHPLAN_DEST_DIR="/usr/local/crashplan"
 
+setup_download_dir() {
+  if [ ! -d "${DOWNLOAD_DIR}" ]; then
+    mkdir ${DOWNLOAD_DIR}
+  fi
+}
+
 install_dependencies() {
   read -p "Install dependencies? (y/n): "
   case $REPLY in
@@ -130,6 +136,7 @@ cleanup() {
 ###############################
 
 stop_crashplan
+setup_download_dir
 install_dependencies
 
 if [ -d "${CRASHPLAN_DEST_DIR}" ]; then
