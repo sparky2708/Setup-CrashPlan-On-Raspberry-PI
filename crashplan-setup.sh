@@ -32,6 +32,9 @@ install_crashplan() {
   tar xzf CrashPlan_${CP_VERSION}_Linux.tgz
 
   pushd crashplan-install
+  if [ -d "${CRASHPLAN_DEST_DIR}" ]; then
+      sudo ./uninstall.sh -i ${CRASHPLAN_DEST_DIR}
+  fi
   sudo ./install.sh
   
   popd  #DOWNLOAD_DIR
