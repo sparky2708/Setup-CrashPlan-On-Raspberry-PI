@@ -40,8 +40,8 @@ install_crashplan() {
   #install crashplan
   sudo ./install.sh
   
-  popd  #DOWNLOAD_DIR
   popd  #crashplan-install
+  popd  #DOWNLOAD_DIR
 }
 
 install_jtux() {
